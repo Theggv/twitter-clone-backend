@@ -2,15 +2,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express, { NextFunction } from 'express';
+import passport from 'passport';
 
 import './core/db';
-import { UsersRouter } from './routes/users';
+import { Routes } from './routes';
 
 const app = express();
 
+// register middlewares
 app.use(express.json());
+app.use(passport.initialize());
 
-app.use('/users', UsersRouter);
+// routes
+app.use(Routes);
 
 // handle 404
 app.use((req, res, next) => {
@@ -26,7 +30,10 @@ app.use(
 		res: express.Response,
 		next: NextFunction
 	) => {
-		res.status(err?.status || 500).send();
+		res.status(err?.status || 500).json({
+			status: 'error',
+			result: err,
+		});
 	}
 );
 

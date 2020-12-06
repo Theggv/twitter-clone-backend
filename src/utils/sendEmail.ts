@@ -29,7 +29,7 @@ export const sendConfirmationEmail = (
 			from: 'twitter@test.com',
 			to: to,
 			subject: 'Подтверждение почты Twitter Clone',
-			html: `Для того, чтобы подтвердить почту перейдите <a href="http://localhost:${process.env.PORT}/users/verify?hash=${confirmHash}">по этой ссылке</a>`,
+			html: `Для того, чтобы подтвердить почту перейдите <a href="http://localhost:${process.env.PORT}/auth/verify?hash=${confirmHash}">по этой ссылке</a>`,
 		},
 		callback
 	);
