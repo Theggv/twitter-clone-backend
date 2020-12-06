@@ -2,11 +2,10 @@ import express from 'express';
 import { validationResult } from 'express-validator';
 import { UserModel } from '../models/UserModel';
 import { generateSHA256 } from '../utils/generateHash';
-import mailer from '../core/mailer';
-import { SentMessageInfo } from 'nodemailer';
 import { sendConfirmationEmail } from '../utils/sendEmail';
+import mongoose from 'mongoose';
 
-class UserController {
+export class UserController {
 	async index(_: any, res: express.Response): Promise<void> {
 		try {
 			const users = await UserModel.find({}).exec();
@@ -24,14 +23,42 @@ class UserController {
 		}
 	}
 
+	async show(req: express.Request, res: express.Response): Promise<void> {
+		try {
+			const userId = req.params.id;
+
+			if (!mongoose.isValidObjectId(userId)) {
+				res.status(400).send();
+				return;
+			}
+
+			const user = await UserModel.findById(userId).exec();
+
+			if (!user) {
+				res.status(404).send();
+				return;
+			}
+
+			res.status(200).json({
+				status: 'success',
+				result: user,
+			});
+		} catch (error) {
+			res.status(500).json({
+				status: 'error',
+				result: error,
+			});
+		}
+	}
+
 	async create(req: express.Request, res: express.Response): Promise<void> {
 		try {
 			const errors = validationResult(req);
+
 			if (!errors.isEmpty()) {
 				res.status(400).json({
 					status: 'error',
 					result: errors.array(),
-					error: true,
 				});
 				return;
 			}
@@ -40,7 +67,9 @@ class UserController {
 				email: req.body.email,
 				fullname: req.body.fullname,
 				username: req.body.username,
-				password: req.body.password,
+				password: generateSHA256(
+					req.body.password + process.env.SECRET_KEY
+				),
 				confirmHash: generateSHA256(
 					process.env.SECRET_KEY + Math.random().toString()
 				),
@@ -53,19 +82,14 @@ class UserController {
 					to: data.email,
 					confirmHash: data.confirmHash,
 				},
-				(err, info) => {
+				async (err, _) => {
 					if (err) {
-						res.json({
+						res.status(500).json({
 							status: 'error',
 							result: err,
-							error: true,
 						});
 					} else {
-						res.json({
-							status: 'success',
-							result: user,
-							error: false,
-						});
+						res.status(200).send();
 					}
 				}
 			);
@@ -73,7 +97,6 @@ class UserController {
 			res.status(500).json({
 				status: 'error',
 				result: error,
-				error: true,
 			});
 		}
 	}
@@ -138,5 +161,3 @@ class UserController {
 		}
 	}
 }
-
-export const UserCtrl = new UserController();
