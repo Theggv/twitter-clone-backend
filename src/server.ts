@@ -12,8 +12,6 @@ const app = express();
 // register middlewares
 app.use(express.json());
 app.use(passport.initialize());
-
-// routes
 app.use(Routes);
 
 // handle 404
