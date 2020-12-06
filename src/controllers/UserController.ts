@@ -82,13 +82,19 @@ export class UserController {
 		}
 	}
 
-	async delete(
+	/**
+	 * dev only!
+	 * @param req
+	 * @param res
+	 * @param next
+	 */
+	async destroyAll(
 		req: express.Request,
 		res: express.Response,
 		next: NextFunction
 	): Promise<void> {
 		try {
-			await UserModel.deleteMany().exec();
+			await UserModel.deleteMany({}).exec();
 			res.status(200).send();
 		} catch (error) {
 			next(error);

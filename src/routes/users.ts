@@ -9,6 +9,6 @@ router.get('/', controller.index);
 router.get('/me', passport.authenticate('jwt'), controller.me);
 router.get('/:id', controller.show);
 router.patch('/', controller.update);
-router.delete('/', controller.delete);
+router.delete('/', controller.destroyAll);
 
 export const UsersRouter = router;

@@ -32,6 +32,10 @@ passport.use(
 		},
 		async (payload, done) => {
 			try {
+				if (!payload.user) {
+					return done(null, false);
+				}
+				
 				return done(null, payload.user);
 			} catch (error) {
 				done(error);

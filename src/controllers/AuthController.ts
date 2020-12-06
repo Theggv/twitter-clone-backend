@@ -104,9 +104,19 @@ export class AuthController {
 				status: 'success',
 				result: {
 					user: user,
-					token: jwt.sign({ user: user }, process.env.SECRET_KEY!, {
-						expiresIn: '30d',
-					}),
+					token: jwt.sign(
+						{
+							user: {
+								_id: user.id,
+								email: user.email,
+								username: user.username,
+							},
+						},
+						process.env.SECRET_KEY!,
+						{
+							expiresIn: '30d',
+						}
+					),
 				},
 			});
 		} catch (error) {
