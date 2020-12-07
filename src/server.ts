@@ -1,3 +1,4 @@
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -11,6 +12,7 @@ const app = express();
 
 // register middlewares
 app.use(express.json());
+app.use(cors());
 app.use(passport.initialize());
 app.use(Routes);
 

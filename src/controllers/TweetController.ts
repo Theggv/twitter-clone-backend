@@ -1,11 +1,7 @@
 import express, { NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
-import { IUserModelDocument, UserModel } from '../models/UserModel';
-import { generateSHA256 } from '../utils/generateHash';
-import { hashPassword } from '../utils/hashPassword';
-import { sendConfirmationEmail } from '../utils/sendEmail';
-import { TweetModel } from '../models/TweetModel';
+import { ITweetModel, TweetModel } from '../models/TweetModel';
+import { UserModel } from '../models/UserModel';
 
 export class TweetController {
 	async index(
@@ -14,7 +10,15 @@ export class TweetController {
 		next: NextFunction
 	): Promise<void> {
 		try {
-			const tweets = await TweetModel.find({}).exec();
+			const tweets = await TweetModel.find({})
+				.populate({
+					path: 'user',
+					select: '_id fullname username avatar about',
+				})
+				.populate({
+					path: 'retweets',
+				})
+				.exec();
 
 			res.status(200).json({
 				status: 'success',
@@ -33,7 +37,12 @@ export class TweetController {
 		try {
 			const tweetId = req.params.id;
 
-			const tweet = await TweetModel.findById(tweetId).exec();
+			const tweet = await TweetModel.findById(tweetId)
+				.populate({
+					path: 'user',
+					select: '_id fullname username avatar about',
+				})
+				.exec();
 
 			if (!tweet) {
 				res.status(404).send();
@@ -65,7 +74,7 @@ export class TweetController {
 				return;
 			}
 
-			const data = {
+			const data: ITweetModel = {
 				text: req.body.text,
 				user: req.body.user,
 			};
@@ -74,7 +83,7 @@ export class TweetController {
 
 			if (data.user !== authUser._id) {
 				res.status(400).send(
-					"Can't create tweet, because token user id and query user id are different"
+					"Can't create tweet, because user token and query token are different."
 				);
 			}
 

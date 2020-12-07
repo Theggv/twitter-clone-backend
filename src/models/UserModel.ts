@@ -7,9 +7,12 @@ export interface IUserModel {
 	password: string;
 	confirmHash: string;
 	confirmed?: boolean;
+
+	avatarUrl?: string;
 	location?: string;
 	about?: string;
 	website?: string;
+	verified?: boolean;
 }
 
 export type IUserModelDocument = IUserModel & Document;
@@ -41,17 +44,22 @@ const UserSchema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	verified: {
+		type: Boolean,
+		default: false,
+	},
+	avatarUrl: String,
 	location: String,
 	about: String,
 	website: String,
 });
 
-// UserSchema.set('toJSON', {
-// 	transform: function (_: any, obj: any) {
-// 		delete obj.password;
-// 		delete obj.confirmHash;
-// 		return obj;
-// 	},
-// });
+UserSchema.set('toJSON', {
+	transform: function (_: any, obj: any) {
+		delete obj.password;
+		delete obj.confirmHash;
+		return obj;
+	},
+});
 
 export const UserModel = model<IUserModelDocument>('User', UserSchema);
