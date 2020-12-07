@@ -4,7 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
+		"@types/cors": "^2.8.8",
 		"@types/nodemailer": "^6.4.0",
+		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
 		"express-validator": "^6.7.0",
@@ -29,8 +31,7 @@
 	},
 	"scripts": {
 		"start": "node dist/server.js",
-		"dev": "ts-node src/server.ts",
-		"nodemon": "nodemon"
+		"dev": "nodemon"
 	},
 	"author": "",
 	"license": "ISC"
