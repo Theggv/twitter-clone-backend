@@ -7,6 +7,7 @@ const router = Router();
 const controller = new AuthController();
 
 router.get('/verify', controller.verify);
+router.get('/check', passport.authenticate('jwt'), controller.check);
 router.post('/signin', passport.authenticate('local'), controller.signin);
 router.post('/signup', signupValidator, controller.signup);
 

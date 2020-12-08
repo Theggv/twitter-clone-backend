@@ -43,6 +43,14 @@ export class AuthController {
 		}
 	}
 
+	async check(
+		req: express.Request,
+		res: express.Response,
+		next: NextFunction
+	): Promise<void> {
+		res.status(200).send();
+	}
+
 	async signup(
 		req: express.Request,
 		res: express.Response,
